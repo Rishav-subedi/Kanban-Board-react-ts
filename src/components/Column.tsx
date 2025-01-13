@@ -8,9 +8,10 @@ interface ColumnProps {
   setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
   handleAddTask: (columnId: number, task: TaskType) => void;
   handleRemoveTask: (task: TaskType, columnId: number) => void;
+  handleDeleteColumn: (columnId: number) => void;
 }
 
-const Column: React.FC<ColumnProps> = ({ column, handleAddTask, handleRemoveTask }) => {
+const Column: React.FC<ColumnProps> = ({ column, handleAddTask, handleRemoveTask, handleDeleteColumn }) => {
   const [taskName, setTaskName] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -37,7 +38,16 @@ const Column: React.FC<ColumnProps> = ({ column, handleAddTask, handleRemoveTask
 
   return (
     <div ref={drop} className={`column ${isOver ? "highlight" : ""}`}>
-      <h2>{column.name}</h2>
+      <div className="column-header">
+        <h2>{column.name}</h2>
+        <button
+          className="delete-column"
+          onClick={() => handleDeleteColumn(column.id)}
+          title="Delete Column"
+        >
+          X
+        </button>
+      </div>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
