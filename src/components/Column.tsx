@@ -5,13 +5,14 @@ import { ColumnType, TaskType } from "../interface/types";
 
 interface ColumnProps {
   column: ColumnType;
-  setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
+  // setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
   handleAddTask: (columnId: number, task: TaskType) => void;
   handleRemoveTask: (task: TaskType, columnId: number) => void;
   handleDeleteColumn: (columnId: number) => void;
+  handleMoveTask: (taskId: number, direction: string, columnId: number) => void;
 }
 
-const Column: React.FC<ColumnProps> = ({ column, handleAddTask, handleRemoveTask, handleDeleteColumn }) => {
+const Column: React.FC<ColumnProps> = ({ column, handleAddTask, handleRemoveTask, handleDeleteColumn, handleMoveTask }) => {
   const [taskName, setTaskName] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -37,7 +38,10 @@ const Column: React.FC<ColumnProps> = ({ column, handleAddTask, handleRemoveTask
   });
 
   return (
-    <div ref={drop} className={`column ${isOver ? "highlight" : ""}`}>
+    <div
+      ref={drop}
+      className={`column ${isOver ? "highlight" : ""}`}
+    >
       <div className="column-header">
         <h2>{column.name}</h2>
         <button
@@ -59,7 +63,7 @@ const Column: React.FC<ColumnProps> = ({ column, handleAddTask, handleRemoveTask
         <button type="submit">Add Task</button>
       </form>
       {column.tasks.map((task) => (
-        <Task key={task.id} task={task} columnId={column.id} />
+        <Task key={task.id} task={task} columnId={column.id} handleMoveTask={handleMoveTask}/>
       ))}
     </div>
   );
