@@ -28,3 +28,28 @@
   background-color: lightblue;
   cursor: move;
 }
+
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-column {
+  background: #ff4d4d;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.3s;
+}
+
+.delete-column:hover {
+  background: #ff1a1a;
+}
