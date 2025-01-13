@@ -1,0 +1,30 @@
+.board {
+  display: flex;
+  justify-content: space-between;
+}
+
+.column {
+  height: 100%;
+  width: 30%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #f7f7f7;
+}
+
+.column.highlight {
+  background-color: #e0ffe0;
+}
+
+.task {
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  margin: 5px 0;
+  border-radius: 3px;
+}
+
+.task.dragging {
+  background-color: lightblue;
+  cursor: move;
+}
