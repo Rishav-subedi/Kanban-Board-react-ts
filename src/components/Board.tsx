@@ -13,30 +13,46 @@ const Board = () => {
     ],
   });
 
-  // Function to handle keyboard navigation
+  // Function to handle keyboard accessibility
   const handleMoveTask = (taskId: number, direction: string, columnId: number) => {
-    // Logic to move task within the column (up/down) or across columns (left/right)
     setColumns((prevColumns) => {
-      const updatedColumns = prevColumns.map((col) => {
-        if (col.id === columnId) {
-          const taskIndex = col.tasks.findIndex((task) => task.id === taskId);
-          if (taskIndex !== -1) {
-            let newTaskList = [...col.tasks];
-            if (direction === 'up' && taskIndex > 0) {
-              // Move task up
-              const task = newTaskList.splice(taskIndex, 1)[0];
-              newTaskList.splice(taskIndex - 1, 0, task);
-            } else if (direction === 'down' && taskIndex < col.tasks.length - 1) {
-              // Move task down
-              const task = newTaskList.splice(taskIndex, 1)[0];
-              newTaskList.splice(taskIndex + 1, 0, task);
-            }
-            return { ...col, tasks: newTaskList };
+      let updatedColumns = [...prevColumns];
+      const columnIndex = prevColumns.findIndex((col) => col.id === columnId);
+  
+      if (columnIndex !== -1) {
+        const column = prevColumns[columnIndex];
+        const taskIndex = column.tasks.findIndex((task) => task.id === taskId);
+  
+        if (taskIndex !== -1) {
+          let updatedTasks = [...column.tasks];
+          if (direction === 'up' && taskIndex > 0) {
+            // Move task up within the column
+            const task = updatedTasks.splice(taskIndex, 1)[0];
+            updatedTasks.splice(taskIndex - 1, 0, task);
+            updatedColumns[columnIndex] = { ...column, tasks: updatedTasks };
+          } else if (direction === 'down' && taskIndex < column.tasks.length - 1) {
+            // Move task down within the column
+            const task = updatedTasks.splice(taskIndex, 1)[0];
+            updatedTasks.splice(taskIndex + 1, 0, task);
+            updatedColumns[columnIndex] = { ...column, tasks: updatedTasks };
+          } else if (direction === 'left' && columnIndex > 0) {
+            // Move task to the previous column
+            const task = updatedTasks.splice(taskIndex, 1)[0];
+            const previousColumn = { ...prevColumns[columnIndex - 1] };
+            previousColumn.tasks.push(task);
+            updatedColumns[columnIndex - 1] = previousColumn;
+            updatedColumns[columnIndex] = { ...column, tasks: updatedTasks };
+          } else if (direction === 'right' && columnIndex < prevColumns.length - 1) {
+            // Move task to the next column
+            const task = updatedTasks.splice(taskIndex, 1)[0];
+            const nextColumn = { ...prevColumns[columnIndex + 1] };
+            nextColumn.tasks.push(task);
+            updatedColumns[columnIndex + 1] = nextColumn;
+            updatedColumns[columnIndex] = { ...column, tasks: updatedTasks };
           }
         }
-        return col;
-      });
-
+      }
+  
       return updatedColumns;
     });
   };
