@@ -33,10 +33,10 @@ const Task: React.FC<TaskProps> = ({ task, columnId, handleMoveTask }) => {
     } else if (e.key === 'ArrowDown') {
       // Move task down within the column
       handleMoveTask(task.id, 'down', columnId);
-    } else if (e.key === 'ArrowLeft' && columnId > 1) {
+    } else if (e.key === 'ArrowLeft') {
       // Move task left to the previous column (ensure columnId > 1 for safety)
       handleMoveTask(task.id, 'left', columnId);
-    } else if (e.key === 'ArrowRight' && columnId < 3) {
+    } else if (e.key === 'ArrowRight') {
       // Move task right to the next column (ensure columnId < 3 for safety)
       handleMoveTask(task.id, 'right', columnId);
     }
