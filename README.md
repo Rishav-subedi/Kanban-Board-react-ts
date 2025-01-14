@@ -123,6 +123,6 @@ Ensure you have the following installed:
 ---
 
 ## Live Demo
-- A live version of the project can be accessed [here](#) *(Replace with actual link if hosted).*
+- A live version of the project can be accessed [here](kanban-board-react-ts.vercel.app) *(Replace with actual link if hosted).*
 
 ---
