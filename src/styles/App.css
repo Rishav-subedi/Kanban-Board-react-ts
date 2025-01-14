@@ -1,4 +1,4 @@
-.board {
+/* .board {
   display: flex;
   justify-content: space-between;
 }
@@ -52,4 +52,118 @@
 
 .delete-column:hover {
   background: #ff1a1a;
+} */
+
+.board {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  overflow-x: auto;
+}
+
+.column {
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  flex-shrink: 0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.column:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.column.highlight {
+  background-color: #e0f7fa;
+  border-color: #006064;
+}
+
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #333333;
+}
+
+.column-header button {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+  font-size: 16px;
+}
+
+.column-header button:hover {
+  background-color: #ff4040;
+}
+
+.column form input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+}
+
+.column form button {
+  margin-top: 5px;
+  padding: 8px;
+  width: 100%;
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.column form button:hover {
+  background-color: #45a049;
+}
+
+.task {
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  cursor: grab;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.task:hover {
+  background-color: #f4f4f4;
+}
+
+.task.dragging {
+  opacity: 0.5;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.column.dragging {
+  background-color: #f1f8e9;
+  border-color: #8bc34a;
 }
