@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useDrop } from "react-dnd";
 import Task from "./Task";
 import { ColumnType, TaskType } from "../interface/types";
+import { Paper, Button, TextField, Typography, IconButton } from '@mui/material';
+import { Delete as DeleteIcon } from '@mui/icons-material';
 
 interface ColumnProps {
   column: ColumnType;
@@ -61,43 +63,63 @@ const Column: React.FC<ColumnProps> = ({
   };
 
   return (
-    <div
-      key={column.id}
-      tabIndex={0}
-      role="button"
-      onKeyDown={handleKeyDown}
-      ref={drop}
-      className={`column ${isOver ? "highlight" : ""}`}
-    >
-      <div className="column-header">
-        <h2>{column.name}</h2>
-        <button
-          className="delete-column"
-          onClick={() => handleDeleteColumn(column.id)}
-          title="Delete Column"
+    <div ref={drop} className="column-container">
+      <Paper className="column-paper">
+        <div
+          key={column.id}
+          tabIndex={0}
+          role="button"
+          onKeyDown={handleKeyDown}
+          className={`column ${isOver ? 'highlight' : ''}`}
         >
-          X
-        </button>
-      </div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="task"
-          value={taskName}
-          onChange={(e) => setTaskName(e.target.value)}
-          placeholder="New task..."
-        />
-        <button type="submit">Add Task</button>
-      </form>
-      {column.tasks.map((task) => (
-        <Task
-          key={task.id}
-          task={task}
-          columnId={column.id}
-          handleMoveTask={handleMoveTask}
-          handleMoveTaskAcrossColumns={handleMoveTaskAcrossColumns}
-        />
-      ))}
+          <div className="column-header">
+            <Typography variant="h6" color="primary">
+              {column.name}
+            </Typography>
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => handleDeleteColumn(column.id)}
+              title="Delete Column"
+            >
+              <DeleteIcon />
+            </IconButton>
+          </div>
+
+          {/* Task Input Form */}
+          <form onSubmit={handleSubmit} className="task-form">
+            <TextField
+              name="task"
+              value={taskName}
+              onChange={(e) => setTaskName(e.target.value)}
+              placeholder="New task..."
+              variant="outlined"
+              size="small"
+              fullWidth
+              className="task-input"
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              className="add-task-button"
+            >
+              Add Task
+            </Button>
+          </form>
+
+          {/* Task List */}
+          {column.tasks.map((task) => (
+            <Task
+              key={task.id}
+              task={task}
+              columnId={column.id}
+              handleMoveTask={handleMoveTask}
+              handleMoveTaskAcrossColumns={handleMoveTaskAcrossColumns}
+            />
+          ))}
+        </div>
+      </Paper>
     </div>
   );
 };

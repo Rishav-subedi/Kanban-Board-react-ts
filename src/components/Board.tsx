@@ -1,20 +1,24 @@
+import { useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Column from "./Column";
 import { ColumnType, TaskType } from "../interface/types";
 import useLocalStorageState from "use-local-storage-state";
 import { addTaskToColumn, removeTaskFromColumn, addColumn, deleteColumn, moveColumn } from "../utils/columnUtility";
-import { moveTaskInColumn, moveTaskAcrossColumns } from "../utils/TaskUtility";
-
+import { moveTaskInColumn, moveTaskAcrossColumns } from "../utils/taskUtility";
+import Search from "./SearchBar";
+import { Button } from '@mui/material';
 
 const Board = () => {
   const [columns, setColumns] = useLocalStorageState<ColumnType[]>("columns", {
     defaultValue: [
       { id: 1, name: "Todo", tasks: [] },
-      { id: 2, name: "In Progress", tasks: [] },
-      { id: 3, name: "Done", tasks: [] },
     ],
   });
+
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  
   const handleAddTask = (columnId: number, task: TaskType) => {
     setColumns((prevColumns) => addTaskToColumn(prevColumns, columnId, task));
   };
@@ -49,24 +53,50 @@ const Board = () => {
     setColumns((prevColumns) => moveColumn(prevColumns, columnId, direction));
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query.toLowerCase());
+  };
+
+  const filteredColumns = columns.map((column) => ({
+    ...column,
+    tasks: column.tasks.filter((task) =>
+      task.name.toLowerCase().includes(searchQuery)
+    ),
+  }));
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="board">
-        {columns.map((column) => (
-          <Column
-            key={column.id}
-            column={column}
-            handleAddTask={handleAddTask}
-            handleRemoveTask={handleRemoveTask}
-            handleDeleteColumn={handleDeleteColumn}
-            handleMoveTask={handleMoveTask}
-            handleMoveTaskAcrossColumns={handleMoveTaskAcrossColumns}
-            handleMoveColumn={handleMoveColumn}
-          />
-        ))}
-        <button onClick={handleAddColumn}>Add New Column</button>
+    <div className="main-container">
+      {/* Search Bar */}
+      <div className="search-container">
+        <Search onSearch={handleSearch} />
       </div>
-    </DndProvider>
+      {/* Add New Column Button */}
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={handleAddColumn} 
+        style={{ marginTop: '20px' }}
+      >
+        + Add New Column
+      </Button>
+      {/* Columns */}
+      <div className="columns-container">
+      {filteredColumns.map((column) => (
+        <Column
+          key={column.id}
+          column={column}
+          handleAddTask={handleAddTask}
+          handleRemoveTask={handleRemoveTask}
+          handleDeleteColumn={handleDeleteColumn}
+          handleMoveTask={handleMoveTask}
+          handleMoveTaskAcrossColumns={handleMoveTaskAcrossColumns}
+          handleMoveColumn={handleMoveColumn}
+        />
+      ))}
+      </div>
+    </div>
+  </DndProvider>
   );
 };
 

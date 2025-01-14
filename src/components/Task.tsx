@@ -1,5 +1,6 @@
 import { useDrag } from "react-dnd";
 import { TaskType } from "../interface/types";
+import { Card, Typography } from "@mui/material";
 
 interface TaskProps {
   task: TaskType;
@@ -27,7 +28,7 @@ const Task: React.FC<TaskProps> = ({
   });
 
   const draggingStyle = {
-    opacity: isDragging ? 0.5 : 1, 
+    opacity: isDragging ? 0.5 : 1,
     marginBottom: "8px",
     background: "white",
     border: "1px solid #ddd",
@@ -48,13 +49,26 @@ const Task: React.FC<TaskProps> = ({
 
   return (
     <div
-      ref={drag} 
-      tabIndex={0} 
+      ref={drag}
+      tabIndex={0}
       style={draggingStyle}
       onKeyDown={handleKeyDownTask}
       {...drag}
     >
-      {task.name}
+      <Card
+        style={{
+          marginBottom: "10px",
+          padding: "10px",
+          cursor: "grab",
+          boxShadow: isDragging
+            ? "0 4px 8px rgba(0, 0, 0, 0.2)"
+            : "0 1px 3px rgba(0, 0, 0, 0.1)",
+          transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        }}
+        elevation={isDragging ? 6 : 2}
+      >
+        <Typography variant="body1">{task.name}</Typography>
+      </Card>
     </div>
   );
 };
