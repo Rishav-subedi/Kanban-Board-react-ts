@@ -3,6 +3,9 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import Column from "./Column";
 import { ColumnType, TaskType } from "../interface/types";
 import useLocalStorageState from "use-local-storage-state";
+import { addTaskToColumn, removeTaskFromColumn, addColumn, deleteColumn, moveColumn } from "../utils/columnUtility";
+import { moveTaskInColumn, moveTaskAcrossColumns } from "../utils/TaskUtility";
+
 
 const Board = () => {
   const [columns, setColumns] = useLocalStorageState<ColumnType[]>("columns", {
@@ -12,102 +15,38 @@ const Board = () => {
       { id: 3, name: "Done", tasks: [] },
     ],
   });
-
-  // Add task to a specific column
   const handleAddTask = (columnId: number, task: TaskType) => {
-    console.log(`Adding task: ${task.id} to column: ${columnId}`);
-    setColumns((prevColumns) =>
-      prevColumns.map((col) =>
-        col.id === columnId ? { ...col, tasks: [...col.tasks, task] } : col
-      )
-    );
+    setColumns((prevColumns) => addTaskToColumn(prevColumns, columnId, task));
   };
   
-  // Remove task from the column
   const handleRemoveTask = (task: TaskType, columnId: number) => {
-    console.log(`Removing task: ${task.id} from column: ${columnId}`);
-    setColumns((prevColumns) =>
-      prevColumns.map((col) => {
-        if (col.id === columnId) {
-          const updatedTasks = col.tasks.filter((t) => t.id !== task.id);
-          return { ...col, tasks: updatedTasks };
-        }
-        return col;
-      })
-    );
+    setColumns((prevColumns) => removeTaskFromColumn(prevColumns, columnId, task.id));
   };
-
-  // Add a new column
+  
   const handleAddColumn = () => {
     const newColumnName = prompt("Enter new column name:", "New Column");
     if (newColumnName) {
-      const newId = columns.length > 0 ? Math.max(...columns.map((col) => col.id)) + 1 : 1;
-      const newColumn: ColumnType = {
-        id: newId, // Generate unique ID using current timestamp
-        name: newColumnName,
-        tasks: [],
-      };
-      setColumns((prevColumns) => [...prevColumns, newColumn]);
+      setColumns((prevColumns) => addColumn(prevColumns, newColumnName));
     }
   };
-
-  // Delete a column by ID
+  
   const handleDeleteColumn = (columnId: number) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this column? All tasks will be lost!"
-    );
+    const confirmDelete = window.confirm("Are you sure you want to delete this column?");
     if (confirmDelete) {
-      setColumns((prevColumns) =>
-        prevColumns.filter((column) => column.id !== columnId)
-      );
+      setColumns((prevColumns) => deleteColumn(prevColumns, columnId));
     }
   };
   
-  // Function to handle keyboard accessibility
   const handleMoveTask = (taskId: number, direction: string, columnId: number) => {
-    setColumns((prevColumns) => {
-      let updatedColumns = [...prevColumns];
-      const columnIndex = prevColumns.findIndex((col) => col.id === columnId);
+    setColumns((prevColumns) => moveTaskInColumn(prevColumns, columnId, taskId, direction));
+  };
   
-      if (columnIndex !== -1) {
-        const column = prevColumns[columnIndex];
-        const taskIndex = column.tasks.findIndex((task) => task.id === taskId);
-  
-        if (taskIndex !== -1) {
-          let updatedTasks = [...column.tasks];
+  const handleMoveTaskAcrossColumns = (taskId: number, sourceColumnId: number, targetColumnId: number) => {
+    setColumns((prevColumns) => moveTaskAcrossColumns(prevColumns, sourceColumnId, targetColumnId, taskId));
+  };
 
-          if (direction === 'up' && taskIndex > 0) {
-            // Move task up within the column
-            const task = updatedTasks.splice(taskIndex, 1)[0];
-            updatedTasks.splice(taskIndex - 1, 0, task);
-            updatedColumns[columnIndex] = { ...column, tasks: updatedTasks };
-          } 
-          else if (direction === 'down' && taskIndex < column.tasks.length - 1) {
-            // Move task down within the column
-            const task = updatedTasks.splice(taskIndex, 1)[0];
-            updatedTasks.splice(taskIndex + 1, 0, task);
-            updatedColumns[columnIndex] = { ...column, tasks: updatedTasks };
-          } 
-          else if (direction === 'left' && columnIndex > 0) {
-            // Move task to the previous column
-            const task = updatedTasks.splice(taskIndex, 1)[0];
-            const previousColumn = { ...prevColumns[columnIndex - 1] };
-            previousColumn.tasks.push(task);
-            updatedColumns[columnIndex - 1] = previousColumn;
-            updatedColumns[columnIndex] = { ...column, tasks: updatedTasks };
-          } else if (direction === 'right' && columnIndex < prevColumns.length - 1) {
-            // Move task to the next column
-            const task = updatedTasks.splice(taskIndex, 1)[0];
-            const nextColumn = { ...prevColumns[columnIndex + 1] };
-            nextColumn.tasks.push(task);
-            updatedColumns[columnIndex + 1] = nextColumn;
-            updatedColumns[columnIndex] = { ...column, tasks: updatedTasks };
-          }
-        }
-      }
-  
-      return updatedColumns;
-    });
+  const handleMoveColumn = (columnId: number, direction: 'left' | 'right') => {
+    setColumns((prevColumns) => moveColumn(prevColumns, columnId, direction));
   };
 
   return (
@@ -117,14 +56,14 @@ const Board = () => {
           <Column
             key={column.id}
             column={column}
-            // setColumns={setColumns}
             handleAddTask={handleAddTask}
             handleRemoveTask={handleRemoveTask}
             handleDeleteColumn={handleDeleteColumn}
             handleMoveTask={handleMoveTask}
+            handleMoveTaskAcrossColumns={handleMoveTaskAcrossColumns}
+            handleMoveColumn={handleMoveColumn}
           />
         ))}
-        {/* Button to add new column */}
         <button onClick={handleAddColumn}>Add New Column</button>
       </div>
     </DndProvider>

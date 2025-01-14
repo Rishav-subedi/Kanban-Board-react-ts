@@ -5,10 +5,19 @@ interface TaskProps {
   task: TaskType;
   columnId: number;
   handleMoveTask: (taskId: number, direction: string, columnId: number) => void;
-
+  handleMoveTaskAcrossColumns: (
+    taskId: number,
+    sourceColumnId: number,
+    targetColumnId: number
+  ) => void;
 }
 
-const Task: React.FC<TaskProps> = ({ task, columnId, handleMoveTask }) => {
+const Task: React.FC<TaskProps> = ({
+  task,
+  columnId,
+  handleMoveTask,
+  handleMoveTaskAcrossColumns,
+}) => {
   const [{ isDragging }, drag] = useDrag({
     type: "TASK",
     item: { task, columnId },
@@ -17,39 +26,33 @@ const Task: React.FC<TaskProps> = ({ task, columnId, handleMoveTask }) => {
     }),
   });
 
-  // Apply dragging styles
   const draggingStyle = {
-    opacity: isDragging ? 0.5 : 1,  // Change opacity while dragging
+    opacity: isDragging ? 0.5 : 1, 
     marginBottom: "8px",
     background: "white",
     border: "1px solid #ddd",
     borderRadius: "4px",
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowUp') {
-      // Move task up within the column (can be refined further for actual reordering)
-      handleMoveTask(task.id, 'up', columnId);
-    } else if (e.key === 'ArrowDown') {
-      // Move task down within the column
-      handleMoveTask(task.id, 'down', columnId);
-    } else if (e.key === 'ArrowLeft') {
-      // Move task left to the previous column (ensure columnId > 1 for safety)
-      handleMoveTask(task.id, 'left', columnId);
-    } else if (e.key === 'ArrowRight') {
-      // Move task right to the next column (ensure columnId < 3 for safety)
-      handleMoveTask(task.id, 'right', columnId);
+  const handleKeyDownTask = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowUp") {
+      handleMoveTask(task.id, "up", columnId);
+    } else if (e.key === "ArrowDown") {
+      handleMoveTask(task.id, "down", columnId);
+    } else if (e.key === "ArrowLeft") {
+      handleMoveTaskAcrossColumns(task.id, columnId, columnId - 1);
+    } else if (e.key === "ArrowRight") {
+      handleMoveTaskAcrossColumns(task.id, columnId, columnId + 1);
     }
   };
 
-
   return (
     <div
-      ref={drag} // Drag ref attached here
-      tabIndex={0} // Make the task focusable for keyboard accessibility
+      ref={drag} 
+      tabIndex={0} 
       style={draggingStyle}
-      onKeyDown={handleKeyDown}
-      {...drag}  // Spread all necessary props to the div
+      onKeyDown={handleKeyDownTask}
+      {...drag}
     >
       {task.name}
     </div>
