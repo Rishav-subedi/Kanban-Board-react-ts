@@ -75,6 +75,12 @@ const Board = () => {
   const handleSearch = (query: string) => {
     setSearchQuery(query.toLowerCase());
   };
+  columns.map((column) => ({
+    ...column,
+    tasks: column.tasks.filter((task) =>
+      task.name.toLowerCase().includes(searchQuery)
+    ),
+  }))
 
   const filteredColumns =
     searchQuery.trim() === ""
@@ -82,8 +88,12 @@ const Board = () => {
       : columns.filter((column) =>
           column.tasks.some((task) =>
             task.name.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        );
+          )).map((column) => ({
+            ...column,
+            tasks: column.tasks.filter((task) =>
+              task.name.toLowerCase().includes(searchQuery)
+            ),
+          }))
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -97,7 +107,7 @@ const Board = () => {
           variant="contained"
           color="primary"
           onClick={handleAddColumn}
-          style={{ marginBottom: "20px"}}
+          style={{ marginBottom: "20px" }}
         >
           + Add New Column
         </Button>
@@ -111,7 +121,7 @@ const Board = () => {
         {/* Fallback UI for No Matches */}
         {columns.length > 0 && filteredColumns.length === 0 && (
           <Typography variant="body1" color="textSecondary">
-            No Match Found.
+            No Tasks Found.
           </Typography>
         )}
         {/* Columns */}
